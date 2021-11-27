@@ -3,9 +3,7 @@ from django.http import HttpResponse
 from .models import Product, Contact, Order, OrderUpdate, Ads
 from django.conf import settings
 from math import ceil
-from .paytm import generate_checksum, verify_checksum
 import json
-from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -100,7 +98,7 @@ def productView(request, id):
 
 
 def checkout(request):
-    thank = False
+    thanks = False
     id = ""
     if request.method == 'GET':
         return render(request, 'shop/checkout.html', {'thanks': thank, 'id': id})
@@ -117,32 +115,10 @@ def checkout(request):
         phone = request.POST.get('inputphone', "")
         order = Order(name=name, email=email, address=address,
                       city=city, state=state, zip_code=zip_code, phone=phone, items_json=items_json, amount=amount)
-        thank = True
+        thanks = True
         order.save()
         update_order = OrderUpdate(
             order_id=order.order_id, update_desc="This order is placed")
         update_order.save()
-        id = order.order_id
-        # request paytm to transfer amount to your account after the payment.
-        merchant_key = settings.PAYTM_SECRET_KEY
-        params = (
-            ('MID', settings.PAYTM_MERCHANT_ID),
-            ('ORDER_ID', str(id)),
-            ('CUST_ID', str(order.email)),
-            ('TXN_AMOUNT', str(order.amount))
-            ('CHANNEL_ID', settings.PAYTM_CHANNEL_ID),
-            ('WEBSITE', settings.PAYTM_WEBSITE),
-            ('INDUSTRY_TYPE_ID', settings.PAYTM_INDUSTRY_TYPE_ID),
-            # ('CALLBACK_URL', 'http://127.0.0.1:8000/callback/')
-        )
-        paytm_params = dict(params)
-        checksum = generate_checksum(paytm_params, merchant_key)
-        paytm_params['CHECKSUMHASH'] = checksum
-    return render(request, 'shop/redirect.html', context=paytm_params)
 
-
-@csrf_exempt
-def handlerequest(request):
-    # paytm will send post request here
-    # since it sends a post request we need to bypass our csrf check
-    pass
+    return render(request, 'shop/redirect.html', {"thanks": thanks})
