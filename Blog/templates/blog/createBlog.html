@@ -1,0 +1,71 @@
+{% extends 'blog/btstrap.html' %}
+{% block createBlogBlock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Blog</title>
+
+    <style>
+        ::-webkit-input-placeholder {
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form action="/blog/createBlog/" method="post">
+            {% csrf_token%}
+            <div class="mb-3">
+                <label for="blogTitle" class="form-label">Title</label>
+                <input type="text" class="form-control" id="blogTitle" name="blogTitle" placeholder="My Blog Title">
+            </div>
+            <div>
+                <label for="blogImg" class="form-label">Blog Image</label>
+                <input type="file" class="form-control" id="blogImg" name="blogImg">
+            </div>
+            <div class="mb-3">
+                <label for="subhead1" class="form-label">Sub Heading 1</label>
+                <input type="text" class="form-control" id="subhead1" name="subhead1"
+                    placeholder="My Blog Sub Heading 1">
+            </div>
+            <div class="mb-3">
+                <label for="descHead1" class="form-label">Description 1</label>
+                <textarea class="form-control" id="descHead1" name="descHead1" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="subhead2" class="form-label">Sub Heading 2</label>
+                <input type="text" class="form-control" id="subhead2" name="subhead2"
+                    placeholder="My Blog Sub Heading 1">
+            </div>
+            <div class="mb-3">
+                <label for="descHead2" class="form-label">Description 2</label>
+                <textarea class="form-control" id="descHead2" name="descHead2" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="subhead3" class="form-label">Sub Heading 3</label>
+                <input type="text" class="form-control" id="subhead3" name="subhead3"
+                    placeholder="My Blog Sub Heading 1">
+            </div>
+            <div class="mb-3">
+                <label for="descHead3" class="form-label">Description 3</label>
+                <textarea class="form-control" id="descHead3" name="descHead3" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="aboutBlog" class="form-label">Summary</label>
+                <textarea class="form-control" id="aboutBlog" name="aboutBlog" rows="3"></textarea>
+            </div>
+            <button class="btn btn-primary my-2" type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+
+</html>
+{% endblock %}

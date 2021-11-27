@@ -1,0 +1,206 @@
+{% extends 'shop/btstrap.html' %}
+{% block productView %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+    <style>
+        .descTab {
+            background-color: #f9f7fcd3;
+            border-radius: 7px;
+            height: 462px;
+            padding: 5px;
+
+        }
+
+        .btn-grp {
+            display: flex;
+            left: 170px;
+            position: relative;
+        }
+
+        .display-box {
+            border: 1px solid black;
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="container my-4 display-box">
+                    <div class="row">
+                        <img src="/media/{{product.Image}}" alt="">
+                    </div>
+                </div>
+                <div class="row btn-grp">
+                    <div class="col">
+                        <button class="btn btn-outline-primary ">Buy Now</button>
+                        <span id="divpr{{product.id}}" class="divpr">
+
+                            <button class="btn btn-outline-info cart" id="pr{{product.id}}">Add To Cart</button></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 m-6">
+                <div class="container">
+                    <h4 id="namepr{{product.id}}">{{ product.product_name }}</h4>
+
+                    <span class="row">
+                        <span class="col">
+                            <h6><b>₹</b><b id="pricepr{{product.id}}">
+                                    {{product.price}}.00</b></h6>
+                            <svg style="width: 1.2rem; color: gold; margin-bottom: 5px;" aria-hidden="true"
+                                focusable="false" data-prefix="fas" data-icon="star" class="svg-inline--fa fa-star"
+                                role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                                <path fill="currentColor"
+                                    d="M316.7 17.8l65.43 132.4l146.4 21.29c26.27 3.796 36.79 36.09 17.75 54.59l-105.9 102.1l25.05 145.5c4.508 26.31-23.23 45.9-46.49 33.7L288 439.6l-130.9 68.7C133.8 520.5 106.1 500.9 110.6 474.6l25.05-145.5L29.72 226.1c-19.03-18.5-8.516-50.79 17.75-54.59l146.4-21.29l65.43-132.4C271.1-6.083 305-5.786 316.7 17.8z">
+                                </path>
+                            </svg>
+                            {{ product.rating }}
+                        </span>
+                    </span>
+
+                    <div class="descTab">
+                        <h6>{{ product.product_desc }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container my-4">
+        <div class="row">
+            {% for item in recommendations %}
+            <div class="col-md-3">
+                <img style="width: 100px; height: 150px;" src="/media/{{ item.Image}}" alt="">
+                <h4>{{ item.product_name }}</h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript">
+        if (localStorage.getItem('cart') == null) {
+            var cart = {};
+        }
+        else {
+            cart = JSON.parse(localStorage.getItem('cart'));
+            updateCart(cart);
+        }
+
+        $('#popoverButton').click(function () {
+            $("#cartPopover").toggle();
+        })
+
+        // When add to cart button is clicked the cart will be initialized.
+        $('.divpr').on('click', 'button.cart', function () {
+            var idstr = this.id.toString();
+            console.log(idstr);
+            if (cart[idstr] != undefined) {
+                qty = cart[idstr][0] + 1;
+            } else {
+                qty = 1;
+                name = document.getElementById('name' + idstr).innerHTML;
+                price = document.getElementById('price' + idstr).innerHTML;
+                cart[idstr] = [qty, name, price];
+            }
+            updateCart(cart);
+        });
+
+
+        function updatePopover(cart) {
+            var popStr = "";
+            popStr = popStr + "<ul><h5>Your Cart</h5>";
+            var i = 1;
+            var totalPrice = 0;
+            for (var item in cart) {
+                popStr = popStr + "<b>" + i + "</b>. ";
+                popStr = popStr + document.getElementById('name' + item).innerHTML.slice(0, 19) + "... Qty: " + cart[item][0] + '<br>';
+                i = i + 1;
+                totalPrice += parseInt(cart[item][2]) * parseInt(cart[item][0]);
+            }
+            popStr = popStr + `<div class='row'><div class='col mx-2'>
+                                <div class='my-1 mx-1'>Total Price: ₹ ${totalPrice}.00</div>
+                                <a href='/shop/checkout'>
+                                <button class='btn btn-success mx-1' id ='checkout'>Checkout</button>
+                                </a><button class='btn btn-danger' onclick='clearCart()' id ='clearCart'>
+                                Clear Cart</button> 
+                                </div>
+                            </div>
+                                `;
+            let popover = document.getElementById('cartPopover');
+            popover.innerHTML = popStr;
+
+
+        }
+
+        function clearCart() {
+            let cart = JSON.parse(localStorage.getItem("cart"));
+            for (let x in cart) {
+                document.getElementById("div" + x).innerHTML = '<button id="' + x + '" class="btn btn-outline-primary cart">Add To Cart</button>';
+            }
+            localStorage.clear();
+            cart = {};
+            location.reload();
+            updateCart(cart);
+        }
+
+        function updateCart(cart) {
+            let sum = 0
+            for (let x in cart) {
+                sum += cart[x][0];
+                document.getElementById('div' + x).innerHTML = "<button id='minus" + x + "' class='btn btn-danger minus'>-</button><span id='val"
+                    + x + "''> " + cart[x][0] + "</span> <button id='plus" + x + "' class='btn btn-success plus'>+</button>";
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.getElementById('cart').innerHTML = sum;
+            updatePopover(cart);
+        }
+
+        $(".divpr").on("click", "button.minus", function () {
+            let item = this.id.slice(5,);
+            cart[item][0] = cart[item][0] - 1;
+            cart[item][0] = Math.max(0, cart[item][0]);
+            if (cart[item][0] == 0) {
+                delete cart[item];
+                document.getElementById('div' + item).innerHTML = `
+                <button id="${item}" class="btn btn-outline-primary cart">Add To
+                                                Cart</button>
+                `;
+            }
+            else {
+                document.getElementById("val" + item).innerHTML = cart[item][0];
+            }
+            updateCart(cart);
+
+        })
+
+
+        $(".divpr").on("click", "button.plus", function () {
+            let item = this.id.slice(4,);
+            cart[item][0] = cart[item][0] + 1;
+            document.getElementById("val" + item).innerHTML = cart[item][0];
+            updateCart(cart);
+        })
+
+    </script>
+</body>
+{% endblock %}
+
+</html>

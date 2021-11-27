@@ -1,0 +1,120 @@
+{% extends 'shop/btstrap.html' %}
+
+{% block tracker %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .popover-container {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="col my-3" id="alertHead">
+            <h1> MyCart Express Tracker - Track Your Orders </h1>
+            <form class="row g-3" method="post" action="#" id="trackerForm">{% csrf_token %}
+
+                <div class="col-md-6">
+                    <label for="orderId" class="form-label">Order Id</label>
+                    <input type="text" class="form-control" name="orderId" id="orderId" placeholder="order id">
+                </div>
+
+                <div class="col-md-6">
+                    <label for="inputEmail4" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="inputEmail" placeholder="email id" id="inputEmail">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">Track Order</button>
+                </div>
+            </form>
+
+        </div>
+        <div class="col my-3">
+            <h1>Your Order Status</h1>
+            <ul class="list-group" id="item">
+                <div class="alert alert-info" role="alert">
+                    Enter your email id and order id to track your order.
+                </div>
+            </ul>
+
+            <ul class="list-group" id="itemDetails">
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+
+{% endblock %}
+
+{% block trackerJS %}
+
+<script>
+    $('#trackerForm').submit(function (event) {
+
+        $("#item").empty();
+        var formData = {
+            'orderId': $("input[name=orderId]").val(),
+            'email': $("input[name=inputEmail]").val(),
+            'csrfmiddlewaretoken': $("input[name=csrfmiddlewaretoken]").val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/shop/tracker/',
+            data: formData,
+            encode: true
+        }).done(function (data) {
+            $("#itemDetails").empty();
+            processedData = JSON.parse(data);
+            if (processedData['status'] == 'success') {
+                updates = processedData['updates'];
+                for (i = 0; i < updates.length; i++) {
+                    var text = updates[i]['text'];
+                    var time = updates[i]['time'];
+                    myStr = `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${text}
+                    <span class="badge bg-primary rounded-pill">${time}</span>
+                </li>
+                `;
+                    $("#item").append(myStr);
+                }
+
+                cart = JSON.parse(processedData['itemsJson']);
+                $("#itemDetails").append("<h1 class='my-3'>Your Order Details</h1>")
+                for (item in cart) {
+                    let name = cart[item][1];
+                    let qty = cart[item][0];
+                    myStr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${name}
+                    <span class="badge bg-primary">${qty}</span>
+                </li>`
+                    $('#itemDetails').append(myStr);
+                }
+            }
+            else {
+                myStr = `
+                <div class="alert alert-warning" role="alert">
+                **Their is no order associated with this id. Please check your email/order id.
+            </div>
+                `;
+                $("#item").append(myStr);
+            }
+
+        })
+        event.preventDefault();
+    })
+
+</script>
+
+{% endblock %}

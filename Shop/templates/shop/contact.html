@@ -1,0 +1,42 @@
+{% extends 'shop/btstrap.html' %}
+
+{% block contact %}
+
+<div class="container">
+    <h3 class="my-4">Contact Us Regarding Any Query</h3>
+    <form action="/shop/contact/" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Username</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your username">
+
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+        </div>
+
+        <div class="mb-3">
+            <label for="contactNo" class="form-label">Phone no.</label>
+            <input type="tel" class="form-control" id="contactNo" name="contactNo"
+                placeholder="Enter your Phone number">
+        </div>
+
+        <div class="form-floating mb-3">
+            <textarea class="form-control" placeholder="Your Query" id="query" name="query"
+                style="height: 100px"></textarea>
+            <label for="query">Describe Your Query</label>
+        </div>
+        <button type="submit" class="btn btn-info">Submit</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block contactJS %}
+<script>
+    {% if thank %}
+    alert("Your complaint is registered, We will get back to you, sorry for inconvinience");
+    document.location = "/shop"
+    {% endif %}
+</script>
+{% endblock %}

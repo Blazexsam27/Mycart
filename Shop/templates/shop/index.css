@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.card {
+    border: none;
+}
+
+.card-body {
+    position: relative;
+    left: 52px;
+    right: 60px;
+    width: 622px;
+}
+
+.card img {
+    width: 602px;
+    height: 300px;
+    position: relative;
+    left: 70px;
+    margin-top: 0px;
+}
+
+body .carousel-control-prev-icon,
+body .carousel-control-next-icon {
+    color: blue;
+    background-color: red;
+}
+
+
+body .no-padding {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+body .cardContainer {
+    display: flex;
+    height: fit-content;
+    justify-content: center;
+}
+
+.container {
+    margin-top: 0;
+    width: 50vw;
+    height: 50vw;
+    position: relative;
+}
